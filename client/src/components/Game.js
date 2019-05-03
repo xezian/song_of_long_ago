@@ -4,7 +4,6 @@ import Inventory from "./Inventory";
 import GameAreaStylings from "./styles/GameAreaStylings";
 
 const Game = () => {
-  let [position, setPosition] = useState({ x: 0, y: 0 });
   let [inventory, setInventory] = useState({
     a: [],
     b: [],
@@ -12,11 +11,13 @@ const Game = () => {
     d: [],
     e: []
   });
-  let [open, setOpen] = useState(false);
+  function updateInventory(inventory) {
+    setInventory(inventory);
+  }
   return (
     <GameAreaStylings>
-      <Canvas position={position} />
-      <Inventory open={open} inventory={inventory} />
+      <Canvas />
+      <Inventory inventory={inventory} updateInventory={updateInventory} />
     </GameAreaStylings>
   );
 };

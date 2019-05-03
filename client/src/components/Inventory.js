@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Inventory = props => {
-  return <>{props.open && <div>inventory</div>}</>;
+  const [open, setOpen] = useState(false);
+  function handleInv(e) {
+    setOpen(!open);
+  }
+  return (
+    <div className="inventory">
+      <button onClick={handleInv}>Inventory</button>
+      {open && <div>inventory</div>}
+    </div>
+  );
 };
 
 export default Inventory;
