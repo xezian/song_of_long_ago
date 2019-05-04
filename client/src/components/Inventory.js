@@ -7,8 +7,8 @@ const Inventory = props => {
   }
   return (
     <div className="inventory">
-      <button onClick={handleInv}>Inventory</button>
       {open && <div>inventory</div>}
+      <button onClick={handleInv}>Inventory</button>
     </div>
   );
 };

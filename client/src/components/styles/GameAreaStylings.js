@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
 const GameAreaStylings = styled.div`
-  background-color: pink;
+  background-color: #98b4d4;
   height: 100%;
   div.canvas {
     width: 100%;
     height: 100%;
     canvas {
       position: absolute;
-      top: 0;
-      bottom: 0;
+      top: 40px;
       left: 0;
       right: 0;
       margin: auto;
+      border: 1px solid #00539c;
     }
     div.controls {
       position: absolute;
