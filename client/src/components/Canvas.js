@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import useKeyPress from "./Controller.js";
 /* 
 Canvas with hooks start from Koen van Gilst's tutorial: https://itnext.io/using-react-hooks-with-canvas-f188d6e416c0
 Repo here: https://github.com/vnglst/react-hooks-canvas
@@ -42,16 +43,43 @@ function relMouseCoords(event) {
 HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
 
 const Canvas = () => {
-  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState({});
   const canvasRef = useRef(null);
+  const presses = {
+    w: useKeyPress("w"),
+    a: useKeyPress("a"),
+    d: useKeyPress("d"),
+    s: useKeyPress("s"),
+    x: useKeyPress("x")
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    let x = 0;
+    let y = 0;
     ctx.fillStyle = "#FF6F61";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    locations.forEach(location => draw(ctx, location));
+    if (presses.w) {
+      x = location.x;
+      y = location.y - 1;
+    }
+    if (presses.d) {
+      x = location.x + 1;
+      y = location.y;
+    }
+    if (presses.a) {
+      x = location.x - 1;
+      y = location.y;
+    }
+    if (presses.s) {
+      x = location.x;
+      y = location.y + 1;
+    }
+    const newLocation = { x, y };
+    setLocation(newLocation);
+    draw(ctx, location);
   });
 
   function handleCanvasClick(e) {
@@ -60,23 +88,11 @@ const Canvas = () => {
     const canvasX = coords.x;
     const canvasY = coords.y;
     const newLocation = { x: canvasX, y: canvasY };
-    setLocations([...locations, newLocation]);
-  }
-
-  function handleClear() {
-    setLocations([]);
-  }
-
-  function handleUndo() {
-    setLocations(locations.slice(0, -1));
+    setLocation(newLocation);
   }
 
   return (
     <div className="canvas">
-      <div className="controls">
-        <button onClick={handleClear}>Clear</button>
-        <button onClick={handleUndo}>Undo</button>
-      </div>
       <canvas
         ref={canvasRef}
         width={400}

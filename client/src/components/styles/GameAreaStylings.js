@@ -35,7 +35,7 @@ const GameAreaStylings = styled.div`
     cursor: pointer;
     color: white;
     border: 1px solid white;
-    background-color: black;
+    background-color: #00539c;
   }
   button:hover {
     color: black;
