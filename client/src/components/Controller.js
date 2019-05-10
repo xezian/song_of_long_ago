@@ -1,20 +1,42 @@
 import { useState, useEffect } from "react";
 
-function useKeyPress(targetKey) {
+function useKeyPresses(keychain) {
   // State for keeping track of whether key is pressed
-  const [keyPressed, setKeyPressed] = useState(false);
+  const [keysUp, setKeysUp] = useState([]);
+  const [keysDown, setKeysDown] = useState([]);
 
-  // If pressed key is our target key then set to true
+  // If pressed key is new  key then set to true
   const downHandler = ({ key }) => {
-    if (key === targetKey) {
-      setKeyPressed(true);
+    if (keychain.includes(key)) {
+      if (!keysDown.includes(key)) {
+        const newKeysUp = keysUp;
+        const newKeysDown = keysDown;
+        if (keysUp.includes(key)) {
+          newKeysUp[newKeysUp.indexOf(key)] = newKeysUp[newKeysUp.length - 1];
+          newKeysUp.pop();
+          setKeysUp(newKeysUp);
+        }
+        newKeysDown.push(key);
+        setKeysDown(newKeysDown);
+      }
     }
   };
 
-  // If released key is our target key then set to false
+  // If released key is new key then set to false
   const upHandler = ({ key }) => {
-    if (key === targetKey) {
-      setKeyPressed(false);
+    if (keychain.includes(key)) {
+      if (!keysUp.includes(key)) {
+        const newKeysUp = keysUp;
+        const newKeysDown = keysDown;
+        if (keysDown.includes(key)) {
+          newKeysDown[newKeysDown.indexOf(key)] =
+            newKeysDown[newKeysDown.length - 1];
+          newKeysDown.pop();
+          setKeysDown(newKeysDown);
+        }
+        newKeysUp.push(key);
+        setKeysUp(newKeysUp);
+      }
     }
   };
 
@@ -27,8 +49,8 @@ function useKeyPress(targetKey) {
       window.removeEventListener("keydown", downHandler);
       window.removeEventListener("keyup", upHandler);
     };
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+  }); // Empty array ensures that effect is only run on mount and unmount
 
-  return keyPressed;
+  return [keysUp, keysDown];
 }
-export default useKeyPress;
+export default useKeyPresses;

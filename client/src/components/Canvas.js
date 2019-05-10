@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import useKeyPress from "./Controller.js";
+import useKeyPresses from "./Controller.js";
 /* 
 Canvas with hooks start from Koen van Gilst's tutorial: https://itnext.io/using-react-hooks-with-canvas-f188d6e416c0
 Repo here: https://github.com/vnglst/react-hooks-canvas
@@ -45,42 +45,37 @@ HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
 const Canvas = () => {
   const [location, setLocation] = useState({});
   const canvasRef = useRef(null);
-  const presses = {
-    w: useKeyPress("w"),
-    a: useKeyPress("a"),
-    d: useKeyPress("d"),
-    s: useKeyPress("s"),
-    x: useKeyPress("x")
-  };
+  const presses = useKeyPresses(["a", "w", "s", "d"]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    let x = 0;
-    let y = 0;
+    let x = location.x;
+    let y = location.y;
+    let speed = 0.077;
     ctx.fillStyle = "#FF6F61";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    if (presses.w) {
+    if (!presses[0].includes("w") && presses[1].includes("w")) {
       x = location.x;
-      y = location.y - 1;
+      y = location.y - speed <= 0 ? location.y : location.y - speed;
     }
-    if (presses.d) {
-      x = location.x + 1;
+    if (!presses[0].includes("d") && presses[1].includes("d")) {
+      x = location.x + speed >= canvas.width ? location.x : location.x + speed;
       y = location.y;
     }
-    if (presses.a) {
-      x = location.x - 1;
+    if (!presses[0].includes("a") && presses[1].includes("a")) {
+      x = location.x - speed <= 0 ? location.x : location.x - speed;
       y = location.y;
     }
-    if (presses.s) {
+    if (!presses[0].includes("s") && presses[1].includes("s")) {
       x = location.x;
-      y = location.y + 1;
+      y = location.y + speed >= canvas.height ? location.y : location.y + speed;
     }
     const newLocation = { x, y };
     setLocation(newLocation);
     draw(ctx, location);
-  });
+  }, [presses, location]);
 
   function handleCanvasClick(e) {
     const canvas = canvasRef.current;
