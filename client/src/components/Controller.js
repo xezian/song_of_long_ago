@@ -9,8 +9,8 @@ function useKeyPresses(keychain) {
   const downHandler = ({ key }) => {
     if (keychain.includes(key)) {
       if (!keysDown.includes(key)) {
-        const newKeysUp = keysUp;
-        const newKeysDown = keysDown;
+        const newKeysUp = [...keysUp];
+        const newKeysDown = [...keysDown];
         if (keysUp.includes(key)) {
           newKeysUp[newKeysUp.indexOf(key)] = newKeysUp[newKeysUp.length - 1];
           newKeysUp.pop();
@@ -26,8 +26,8 @@ function useKeyPresses(keychain) {
   const upHandler = ({ key }) => {
     if (keychain.includes(key)) {
       if (!keysUp.includes(key)) {
-        const newKeysUp = keysUp;
-        const newKeysDown = keysDown;
+        const newKeysUp = [...keysUp];
+        const newKeysDown = [...keysDown];
         if (keysDown.includes(key)) {
           newKeysDown[newKeysDown.indexOf(key)] =
             newKeysDown[newKeysDown.length - 1];
@@ -49,7 +49,7 @@ function useKeyPresses(keychain) {
       window.removeEventListener("keydown", downHandler);
       window.removeEventListener("keyup", upHandler);
     };
-  }); // Empty array ensures that effect is only run on mount and unmount
+  });
 
   return [keysUp, keysDown];
 }

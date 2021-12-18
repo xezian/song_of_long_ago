@@ -43,39 +43,43 @@ function relMouseCoords(event) {
 HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
 
 const Canvas = () => {
-  const [location, setLocation] = useState({});
+  const [location, setLocation] = useState({x:0,y:0});
   const canvasRef = useRef(null);
   const presses = useKeyPresses(["a", "w", "s", "d"]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    let x = location.x;
-    let y = location.y;
-    let speed = 0.077;
-    ctx.fillStyle = "#FF6F61";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    if (!presses[0].includes("w") && presses[1].includes("w")) {
-      x = location.x;
-      y = location.y - speed <= 0 ? location.y : location.y - speed;
-    }
-    if (!presses[0].includes("d") && presses[1].includes("d")) {
-      x = location.x + speed >= canvas.width ? location.x : location.x + speed;
-      y = location.y;
-    }
-    if (!presses[0].includes("a") && presses[1].includes("a")) {
-      x = location.x - speed <= 0 ? location.x : location.x - speed;
-      y = location.y;
-    }
-    if (!presses[0].includes("s") && presses[1].includes("s")) {
-      x = location.x;
-      y = location.y + speed >= canvas.height ? location.y : location.y + speed;
-    }
-    const newLocation = { x, y };
-    setLocation(newLocation);
-    draw(ctx, location);
-  }, [presses, location]);
+    const timeoutid = setTimeout(() => {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#FF6F61";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      let x = location.x;
+      let y = location.y;
+      let speed = 2;
+      if (!presses[0].includes("w") && presses[1].includes("w")) {
+        x = location.x;
+        y = location.y - speed <= 0 ? location.y : location.y - speed;
+      }
+      if (!presses[0].includes("d") && presses[1].includes("d")) {
+        x = location.x + speed >= canvas.width ? location.x : location.x + speed;
+        y = location.y;
+      }
+      if (!presses[0].includes("a") && presses[1].includes("a")) {
+        x = location.x - speed <= 0 ? location.x : location.x - speed;
+        y = location.y;
+      }
+      if (!presses[0].includes("s") && presses[1].includes("s")) {
+        x = location.x;
+        y = location.y + speed >= canvas.height ? location.y : location.y + speed;
+      }
+      if (location.x !== x || location.y !== y) {
+        setLocation({x,y});
+      }
+      draw(ctx, location);
+    }, 10)
+    return () => clearTimeout(timeoutid);
+  }, [location, presses]);
 
   function handleCanvasClick(e) {
     const canvas = canvasRef.current;
